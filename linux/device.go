@@ -29,10 +29,12 @@ func newDevice(n int, chk bool) (*device, error) {
 	}
 
 	req := devListRequest{devNum: hciMaxDevices}
+	log.Printf("Janitha %+v", req)
 	if err := gioctl.Ioctl(uintptr(fd), hciGetDeviceList, uintptr(unsafe.Pointer(&req))); err != nil {
 		return nil, err
 	}
 	for i := 0; i < int(req.devNum); i++ {
+		log.Printf("Janitha %q", i)
 		d, err := newSocket(fd, i, chk)
 		if err == nil {
 			log.Printf("dev: %s opened", d.name)
@@ -44,6 +46,7 @@ func newDevice(n int, chk bool) (*device, error) {
 
 func newSocket(fd, n int, chk bool) (*device, error) {
 	i := hciDevInfo{id: uint16(n)}
+	log.Printf("Janitha %+v, %+v, %+v", fd, n, i)
 	if err := gioctl.Ioctl(uintptr(fd), hciGetDeviceInfo, uintptr(unsafe.Pointer(&i))); err != nil {
 		return nil, err
 	}
@@ -56,6 +59,7 @@ func newSocket(fd, n int, chk bool) (*device, error) {
 	}
 	log.Printf("dev: %s up", name)
 	if err := gioctl.Ioctl(uintptr(fd), hciUpDevice, uintptr(n)); err != nil {
+		log.Printf("Janitha %+v", err)
 		if err != syscall.EALREADY {
 			return nil, err
 		}
